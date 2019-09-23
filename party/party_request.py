@@ -29,6 +29,7 @@ class PartyRequest(object):
         self.username = username
 
         self.headers = headers
+        self.certbundle = None
 
     def request(self, endpoint, method='get', **kwargs):
         """Send request to Artifactory API.
@@ -50,6 +51,9 @@ class PartyRequest(object):
         url = '/'.join([self.artifactory_url, endpoint])
 
         request_method = getattr(requests, method.lower())
+
+        if 'verify' not in kwargs:
+            kwargs['verify'] = self.certbundle
 
         auth = (self.username, base64.b64decode(self.password).decode())
         response = request_method(
